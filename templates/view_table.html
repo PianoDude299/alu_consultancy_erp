@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>{{ table_name | title }} Table - ALU Structures</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .left-container {
+            flex: 1;
+            text-align: center;
+        }
+
+        .right-container {
+            flex: 1;
+            text-align: center;
+        }
+
+        select {
+            width: 80%;
+            margin-bottom: 10px;
+        }
+
+        .delete-button {
+            padding: 10px;
+            background-color: #ff0000;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <button class="nav-button" onclick="location.href='/d_local_expenditure'">Local Expenditure</button>
+        <button class="nav-button" onclick="location.href='/d_material_purchase'">Material Purchase</button>
+        <button class="nav-button" onclick="location.href='/d_report'">Report</button>
+        <button class="nav-button" onclick="location.href='/d_manager_accounts'">Managers</button>
+        <button class="nav-button" onclick="location.href='/d_labour'">Labour</button>
+        <button class="nav-button" onclick="location.href='/d_staff_salary'">Staff Salary</button>
+    </nav>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="left-container">
+        <h1>{{ table_name | title }} Table</h1>
+        {% if msg %}
+            <p id="message">{{ msg }}</p>
+        {% else %}
+            <table border="1">
+                <tr>
+                    {% for column in data[0].keys() %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+                {% for row in data %}
+                    <tr>
+                        {% for key,value in row.items() %}
+                            <!--{% if key == 'Bill' and value != 'None' and value %}-->
+                                <!--<td><a href="file:/{{ value }}" target="_blank">View Bill</a></td>-->
+                            <!--{% else %}-->
+                                <td>{{ value }}</td>
+                            {% endif %}
+                        <!--{% endfor %}}-->
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </div>
+
+    <div class="right-container">
+        <form method="POST">
+            <label for="t-id-input">Enter T_ID:</label>
+            <input type="text" id="t-id-input" name="t-id-input" placeholder="Type T_ID here" required>
+            <button type="submit" name="delete-record" class="delete-button">Delete Record</button>
+            <br><button class="button" id="download-btn">Download Data as Excel</button>
+            <br><button class="button" onclick="location.href='{{ prev_page }}'" style="margin-top: 5px;">Log out</button>
+        </form>
+    </div>
+    
+    <script>
+        // Auto-refresh after 3 seconds only if the message is "Record deleted!"
+        setTimeout(function() {
+            var messageElement = document.getElementById("message");
+            if (messageElement && messageElement.innerText.trim() === "Record deleted!") {
+                window.location.href = window.location.href + '?refresh=true';
+            }
+        }, 3000);
+
+        document.getElementById("download-btn").addEventListener("click", function() {
+        const data = JSON.parse('{{ data | tojson | replace("\'", "\\\'") }}');
+
+        // Function to format date field to include only date and time
+        const formatDateTime = (dateTimeStr) => {
+            const dateTime = new Date(dateTimeStr);
+            return dateTime.toISOString().slice(0, 16).replace("T", " ");
+        };
+
+        // Extract the header row from the first data object
+        const headerRow = Object.keys(data[0]);
+
+        // Check if 'DOB' column exists in the header row
+        const dobIndex = headerRow.indexOf('DOB');
+        if (dobIndex !== -1) {
+            // Move 'DOB' column to the end of the header row
+            headerRow.push(headerRow.splice(dobIndex, 1)[0]);
+        }
+
+        // Create an array with the modified header row followed by the data rows
+        const csvContent = "data:text/csv;charset=utf-8," +
+            [headerRow.join(",")].concat(data.map(row => {
+                // Map date fields to include only date and time
+                return headerRow.map(key => (key.includes("date") ? formatDateTime(row[key]) : row[key])).join(",");
+            })).join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "data.csv"); // Specify the file name here
+
+        document.body.appendChild(link);
+        link.click();
+    });
+    </script>
+</body>
+</html>

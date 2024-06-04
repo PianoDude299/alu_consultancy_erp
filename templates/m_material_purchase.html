@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Site {{ Site }} Material Purchase- ALU Structures</title>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <button class="nav-button" onclick="location.href='/m_local_expenditure'">Local Expenditure</button>
+        <button class="nav-button" onclick="location.href='#'">Material Purchase</button>
+        <button class="nav-button" onclick="location.href='/m_report'">Report</button>
+        <button class="nav-button" onclick="location.href='/m_labour'">Labour</button>
+        <button class="nav-button" onclick="location.href='/m_staff_salary'">Staff Salary</button>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        
+        <!-- Company Logo -->
+        <img class="logo" src="{{ url_for('static', filename='company_logo.png') }}" alt="Company Logo">
+        
+        <!-- Subheading -->
+        <h2 class="Page_Name">Site {{ Site }} Material Purchase</h2>
+
+
+        <!-- Form for Material Purchase -->
+        <form method="POST" action="{{ url_for('m_material_purchase') }}" enctype="multipart/form-data">
+            <table>
+                <tr>
+                    <td><label for="tid">T_ID</label></td>
+                    <td><input type="text" id="tid" name="tid" placeholder="Used for updation only"></td>
+                </tr>
+                <!-- Date Selection Input -->
+                <tr>
+                    <td><label for="purchase-date">Date</label></td>
+                    <td><input type="date" id="purchase-date" name="purchase-date" required></td>
+                </tr>
+
+                <!-- Material Input -->
+                <tr>
+                    <td><label for="material-input">Material</label></td>
+                    <td><input type="text" id="material-input" name="material-input" required></td>
+                </tr>
+
+                <!-- Quantity Input -->
+                <tr>
+                    <td><label for="quantity-input">Quantity</label></td>
+                    <td><input type="text" id="quantity-input" name="quantity-input" required></td>
+                </tr>
+
+                <!-- Price Input -->
+                <tr>
+                    <td><label for="price-input">Price</label></td>
+                    <td><input type="text" id="price-input" name="price-input" required></td>
+                </tr>
+
+                <!-- Bill Image Upload Input
+                <tr>
+                    <td><label for="bill-image">Bill Image</label></td>
+                    <td><input type="file" id="bill-image" name="bill-image" accept="image/*"></td>
+                </tr> -->
+                
+            </table>
+            <input type="hidden" id="HiddenField" name="HiddenField" value="1">
+
+            <div class="msg">{{ msg }}</div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="button" type="submit">Submit</button>
+                <button class="button" type="submit" onclick="update()">Update</button>
+                <button class="button" type="button" onclick="location.href='/m_view_table/purchase'">View</button>
+                <button class="button" type="reset">Reset</button>
+                <button class="button" onclick="location.href='/'">Log Out</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function update() {
+            var hiddenField = document.getElementById("HiddenField");
+            hiddenField.value = "2";
+        }
+    </script>
+</body>
+</html>

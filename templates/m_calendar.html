@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar with Expenditure</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.0/fullcalendar.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        #calendar {
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+    </style>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.0/fullcalendar.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var calendar = $('#calendar');
+
+            function initializeCalendar() {
+                calendar.fullCalendar({
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                    },
+                    defaultDate: new Date(),
+                    navLinks: true,
+                    editable: true,
+                    eventLimit: true,
+                    events: function(start, end, timezone, callback) {
+                        $.ajax({
+                            url: '/m_calendar_events',
+                            success: function(data) {
+                                var events = [];
+                                $.each(data, function(index, item) {
+                                    var formattedDate = moment(item.date).format('YYYY-MM-DD');
+                                    var title = 'Expenditure: $' + item.total_amount_expenditure  + '\nPurchase: $' + item.total_amount_purchase;
+                                    events.push({
+                                        title: title,
+                                        start: formattedDate,
+                                        allDay: true, // Set allDay property to true
+                                        color: '#f00',
+                                    });
+                                    
+                                });
+                                callback(events);
+                            }
+                        });
+                    }
+                });
+            }
+
+
+            initializeCalendar();
+        });
+    </script>    
+</head>
+<body>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <nav class="navbar">
+        <button class="nav-button" onclick="location.href='/m_local_expenditure'">Local Expenditure</button>
+        <button class="nav-button" onclick="location.href='/m_material_purchase'">Material Purchase</button>
+        <button class="nav-button" onclick="location.href='/m_report'">Report</button>
+        <button class="nav-button" onclick="location.href='/m_labour'">Labour</button>
+        <button class="nav-button" onclick="location.href='/m_staff_salary'">Staff Salary</button>
+    </nav>
+    <br />
+    <h1 align="center"><a href="#">Calendar</a></h1>
+    <br />
+    </div>
+    <br />
+    <div id="calendar"></div>
+</body>
+</html>
